@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com._520it.crm.mapper.MemberMapper">
+    <resultMap id="BaseResultMap" type="com._520it.crm.domain.Member">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="memberName" property="membername" jdbcType="BIGINT"/>
+        <result column="memberPrice" property="memberprice" jdbcType="DECIMAL"/>
+        <result column="memberSex" property="membersex" jdbcType="TINYINT"/>
+        <result column="memberBirthday" property="memberbirthday" jdbcType="DATE"/>
+        <result column="memberArddess" property="memberarddess" jdbcType="VARCHAR"/>
+        <result column="memberNote" property="membernote" jdbcType="VARCHAR"/>
+        <result column="memberStart" property="memberstart" jdbcType="VARCHAR"/>
+        <result column="memberNumber" property="membernumber"/>
+        <association property="vipmember" javaType="com._520it.crm.domain.Vipmember" columnPrefix="v_">
+            <id property="id" column="id"></id>
+            <id property="vipname" column="VIPName"></id>
+        </association>
+        <association property="sufficienttake" javaType="com._520it.crm.domain.Sufficienttake">
+            <result property="totalamount" column="s_totalAmount"></result>
+        </association>
+        <association property="pet" javaType="com._520it.crm.domain.Pet">
+            <id column="p_id" property="id" jdbcType="BIGINT"/>
+            <result column="p_petName" property="petname" jdbcType="VARCHAR"/>
+            <result column="p_petGender" property="petgender" jdbcType="BIT"/>
+            <result column="p_perBirthday" property="perbirthday" jdbcType="DATE"/>
+            <result column="p_petCharacteristic" property="petcharacteristic" jdbcType="VARCHAR"/>
+            <result column="p_petColor" property="petcolor" jdbcType="VARCHAR"/>
+            <result column="p_petLineageRegisterNumber" property="petlineageregisternumber" jdbcType="VARCHAR"/>
+                 <!--<association property="breed" javaType="com._520it.crm.domain.Breed">
+                        <result property="petbreedname" column="b_petBreedName"></result>
+                  </association>-->
+           <!--<association property="breed" select="com._520it.crm.mapper.BreedMapper.selectAll"  javaType="com._520it.crm.domain.Breed" column="id">
+               <id column="id" property="id" jdbcType="BIGINT" />
+               <result column="petBreedName" property="petbreedname" jdbcType="VARCHAR" />
+           </association>-->
+        </association>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from member
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com._520it.crm.domain.Member" useGeneratedKeys="true" keyProperty="id">
+    insert into member (memberName, memberPrice, memberSex, 
+      memberBirthday, memberArddess, memberNote, 
+      memberStart, VIPMember_id, memberNumber
+      )
+    values (#{membername,jdbcType=VARCHAR}, #{memberprice}, #{membersex,jdbcType=TINYINT},
+      #{memberbirthday,jdbcType=DATE}, #{memberarddess,jdbcType=VARCHAR}, #{membernote,jdbcType=VARCHAR}, 
+      #{memberstart,jdbcType=VARCHAR}, #{vipmember.id,jdbcType=BIGINT}, #{membernumber,jdbcType=BIGINT}
+      )
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com._520it.crm.domain.Member">
+    update member
+    set memberName = #{membername,jdbcType=VARCHAR},
+      memberSex = #{membersex,jdbcType=TINYINT},
+      memberBirthday = #{memberbirthday,jdbcType=DATE},
+      memberArddess = #{memberarddess,jdbcType=VARCHAR},
+      memberNote = #{membernote,jdbcType=VARCHAR},
+      memberStart = #{memberstart,jdbcType=VARCHAR},
+      VIPMember_id = #{vipmember.id,jdbcType=BIGINT},
+      memberNumber = #{membernumber,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select id, memberName, memberPrice, memberSex, memberBirthday, memberArddess, memberNote, 
+    memberStart, VIPMember_id, memberNumber
+    from member
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+      SELECT m.*,p.id p_id,p.petName p_petName,
+      p.perBirthday P_perBirthday,P.petCharacteristic
+      p_petCharacteristic ,p.petGender p_petGender,
+      p.petColor P_petColor,P.petLineageRegisterNumber p_petLineageRegisterNumber,
+      v.VIPName v_VIPName ,v.id v_id,b.petBreedName b_petBreedName,
+       s.totalAmount s_totalAmount
+      FROM pet p LEFT JOIN member m  ON p.member_id= m.id
+      LEFT JOIN breed b ON p.breed_id=b.id
+      LEFT JOIN vipmember v ON m.VIPMember_id=v.id
+      LEFT JOIN sufficienttake  s ON m.id=s.memberName_id
+  </select>
+
+
+    <select id="selectVIPMember" resultType="com._520it.crm.domain.Vipmember">
+    SELECT * FROM vipmember
+  </select>
+    <update id="updatMemberstart">
+    UPDATE member SET memberStart=FALSE WHERE id=#{id}
+  </update>
+
+    <select id="selectEmployee" resultType="com._520it.crm.domain.Employee">
+    SELECT id,username FROM employee
+  </select>
+
+</mapper>

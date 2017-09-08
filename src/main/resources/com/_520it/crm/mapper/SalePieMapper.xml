@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+				"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com._520it.crm.mapper.SalePieMapper">
+
+		<resultMap id="BaseResultMap" type="com._520it.crm.domain.SalePie">
+				<id column="id" property="id"/>
+				<result column="saleprice" property="saleprice"/>
+				<result column="salenumber" property="salenumber"/>
+				<result column="saleDate" property="saleDate"/>
+
+				<association property="pkind" javaType="com._520it.crm.domain.ProductCategory" columnPrefix="p">
+						<result property="id" column="id"/>
+						<result property="category" column="name"/>
+				</association>
+
+		</resultMap>
+
+
+		<insert id="insert" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+    insert into salereport (ProductCategoryId, salenumber, saleprice,saleDate)
+    values (#{pkind.id}, #{salenumber}, #{saleprice},#{saleDate})
+  </insert>
+
+
+		<!--以天为单位 ,需要指定月份和年份-->
+		<select id="queryDay" resultMap="BaseResultMap">
+			select s.id , p.id pid , p.category pname, sum(s.salenumber) salenumber, sum(s.saleprice) saleprice ,s.saleDate
+			from salereport s LEFT JOIN ProductCategory p ON s.ProductCategoryId = p.id
+			where s.saleDate = #{date}
+			GROUP BY pname
+	</select>
+
+		<!--以月为单位 , 只需要指定年份-->
+		<select id="queryMonth" resultMap="BaseResultMap">
+			select s.id,p.id pid , p.category pname, sum(s.salenumber) salenumber, sum(s.saleprice) saleprice ,s.saleDate
+			from salereport s LEFT JOIN ProductCategory p ON s.ProductCategoryId = p.id
+			where year(s.saleDate)=#{year} and month(s.saleDate) = #{month}
+			GROUP BY pname
+	</select>
+
+		<!--以年为单位-->
+		<select id="queryYear" resultMap="BaseResultMap">
+			select s.id,p.id pid , p.category pname, sum(s.salenumber) salenumber, sum(s.saleprice) saleprice ,s.saleDate
+			from salereport s LEFT JOIN ProductCategory p ON s.ProductCategoryId = p.id
+			where year(s.saleDate)=#{year}
+			GROUP BY pname
+
+	</select>
+
+</mapper>

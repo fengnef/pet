@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com._520it.crm.mapper.ReportMapper">
+
+  <resultMap id="BaseResultMap" type="com._520it.crm.domain.Report">
+    <id column="id" property="id" />
+    <result column="outbill"  property="outbill" />
+    <result column="inbill"  property="inbill" />
+    <result column="billdate" property="billdate" />
+		 <result property="way" column="way"/>
+  </resultMap>
+
+  <delete id="deleteByPrimaryKey">
+    delete from report
+    where id = #{id}
+  </delete>
+
+  <insert id="insert" keyColumn="id" keyProperty="id"  useGeneratedKeys="true">
+    insert into report (outbill, inbill, billdate)
+    values (#{outbill}, #{inbill}, #{billdate})
+  </insert>
+
+  <update id="updateByPrimaryKey" >
+    update report
+    set outbill = #{outbill},
+      inbill = #{inbill},
+      billdate = #{billdate}
+    where id = #{id}
+  </update>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+    select id, outbill, inbill, billdate
+    from report
+    where id = #{id}
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, outbill, inbill, billdate
+    from report
+  </select>
+
+  <select id="queryCount" resultType="long">
+    select count(id)
+    from report
+    GROUP BY #{data}
+  </select>
+
+	<select id="query"	resultMap="BaseResultMap">
+			SELECT  id, outbill, inbill, billdate
+    from report GROUP BY #{data}
+	</select>
+
+
+
+		<!--以天为单位 ,需要指定月份和年份-->
+	<select id="queryByDay" resultMap="BaseResultMap">
+			select DATE_FORMAT(billdate,'%Y-%m-%d') way,
+			SUM(inbill) inbill ,SUM(outbill) outbill  from report
+			WHERE   YEAR(billdate)=#{year} AND MONTH(billdate)=#{month}
+			group by way
+	</select>
+
+		<!--以周为单位 , 只需要指定年份-->
+	<select id="queryByWeek" resultMap="BaseResultMap">
+			select DATE_FORMAT(billdate,'%u') way,
+			SUM(inbill) inbill ,SUM(outbill) outbill  from report
+			WHERE   YEAR(billdate)=#{year}
+			group by way
+	</select>
+
+		<!--以月为单位 , 只需要指定年份-->
+	<select id="queryByMonth" resultMap="BaseResultMap">
+			select DATE_FORMAT(billdate,'%Y-%m') way,
+			SUM(inbill) inbill ,SUM(outbill) outbill  from report
+			WHERE   YEAR(billdate)=#{year}
+			group by way
+	</select>
+
+		<!--以年为单位-->
+	<select id="queryByYear" resultMap="BaseResultMap">
+			select DATE_FORMAT(billdate,'%Y') way,
+			SUM(inbill) inbill ,SUM(outbill) outbill from report
+			group by way
+	</select>
+
+</mapper>

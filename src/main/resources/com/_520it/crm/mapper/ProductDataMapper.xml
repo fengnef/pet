@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com._520it.crm.mapper.ProductDataMapper">
+  <!-- 保存数据 -->
+  <resultMap type="com._520it.crm.domain.ProductData" id="basemapper">
+  		<result property="id" column="id" />
+  		<result property="productId" column="productId" />
+		<result property="productName" column="productName" />
+		<result property="stockIncomeAveragePrice" column="stockIncomeAveragePrice" />
+		<result property="stockOutcomeAveragePrice" column="stockOutcomeAveragePrice" />
+		<result property="salePrice" column="salePrice" />
+		<result property="saleCount" column="saleCount" />
+		<result property="salePriceCount" column="salePriceCount" />
+		<result property="profit" column="profit" />
+  </resultMap>
+  
+  <insert id="save" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+  	insert into productData (productId,productName,stockIncomeAveragePrice,stockOutcomeAveragePrice,
+  	salePrice,saleCount,salePriceCount,profit)values(#{productId},#{productName},#{stockIncomeAveragePrice},
+  	#{stockOutcomeAveragePrice},#{salePrice},#{saleCount},#{salePriceCount},#{profit})
+  </insert>
+  <!-- 查询全部 -->
+  <select id="list" resultMap="basemapper">
+  		select * from productData
+  </select>
+  <!--高级查询条件  -->
+  <sql id="base_where">
+  		<where>
+  			<if test="productName!=null and productName!=''">
+  				pd.productName like concat('%',#{productName},'%')
+  			</if>
+  		</where>
+  </sql>
+  <!--查询总条数  -->
+  <select id="queryPageCount" resultType="long">
+  	select count(pd.id) from productData pd
+  	<include refid="base_where"/>
+  	limit #{start},#{rows}
+  </select>
+  <!--查询结果集  -->
+  <select id="queryPageResult" resultMap="basemapper">
+  	select * from productData pd
+  	<include refid="base_where"/>
+  </select>
+  <!--查询所有的商品种类  -->
+  <select id="getPetKind" resultMap="com._520it.crm.mapper.ProductCategoryMapper.BaseMap">
+  	select pc.id,pc.kind from productcategory pc
+  </select>
+  <!--查询当前的商品种类所属的所有商品名称  -->
+  <select id="getProductNameBypc" resultMap="com._520it.crm.mapper.ProductMapper.BaseMap">
+  	select p.id, p.name from  product p left join productcategory pc on pc.id=p.productCategoryId where p.productCategoryId=#{productCategoryId}
+  </select>
+  <!--查询产品Id  -->
+  <select id="getProductId" resultType="long">
+  	select p.id from product where p.name="吉米娃娃923-18"
+  </select>
+  <!-- 查询产品名称 ,表a,aname为选定的商品名称-->
+  <select id="getProductName" resultType="string">
+    select productData.productName from productData  where productData.productName="吉米娃娃923-18"
+  	<!-- select p.name pname from productData pd 
+  		 left join product p on pd.productId=p.id 
+  		 where p.name=#{aname} -->
+  </select>
+  <!-- 查询入库单价 -->
+  <select id="getStockIncomeAveragePrice" resultType="java.math.BigDecimal">
+  	select sb.costPrice from productData pd left join stockincomebillitem sb on sb.product_id=pd.id where pd.productName="吉米娃娃923-18"
+  </select> 
+  <!-- 查询出库单价 --> 
+  <select id="getStockOutcomeAveragePrice" resultType="java.math.BigDecimal">
+  	select sb.salePrice from productData pd left join stockincomebillitem sb on sb.product_id=pd.id where pd.productName="吉米娃娃923-18"
+  </select>
+  <!-- 查询销售数量 -->
+  <select id="getSaleCount" resultType="java.math.BigDecimal">
+  	select sum(count) from checkstand where productName="吉米娃娃923-18"
+  </select>
+</mapper>

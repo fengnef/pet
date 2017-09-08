@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com._520it.crm.mapper.ManufacturerMapper">
+    <resultMap id="BaseResultMap" type="com._520it.crm.domain.Manufacturer">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="productOriginName" property="productoriginname" jdbcType="VARCHAR"/>
+        <result column="start" property="start" jdbcType="TINYINT"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        DELETE FROM manufacturer
+        WHERE id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com._520it.crm.domain.Manufacturer" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO manufacturer (productOriginName, start)
+        VALUES (#{productoriginname,jdbcType=VARCHAR}, #{start,jdbcType=TINYINT})
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com._520it.crm.domain.Manufacturer">
+        UPDATE manufacturer
+        SET productOriginName = #{productoriginname,jdbcType=VARCHAR},
+            start             = #{start,jdbcType=TINYINT}
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+            id,
+            productOriginName,
+            start
+        FROM manufacturer
+        WHERE id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT
+            id,
+            productOriginName,
+            start
+        FROM manufacturer
+    </select>
+
+    <sql id="base_where">
+        <where>
+          <if test="keyword!=null and keyword!=''">
+              productOriginName like concat('%',#{keyword},'%')
+          </if>
+        </where>
+    </sql>
+
+    <select id="queryPageCount" resultType="Long">
+        SELECT count(*) FROM manufacturer
+        <include refid="base_where"/>
+    </select>
+
+    <select id="queryPageResult" resultMap="BaseResultMap">
+        SELECT id, productOriginName, start
+        FROM manufacturer
+        <include refid="base_where"/>
+        LIMIT #{start},#{rows}
+    </select>
+
+</mapper>

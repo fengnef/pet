@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com._520it.crm.mapper.LeaverMapper" >
+  <resultMap id="BaseResultMap" type="com._520it.crm.domain.Leaver" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="leavefor" property="leavefor" jdbcType="VARCHAR" />
+    <result column="leaveTimes" property="leaveTimes" jdbcType="DATE" />
+    <result column="leaveTimed" property="leaveTimed" jdbcType="DATE" />
+    <result column="leaveDuration" property="leaveDuration" jdbcType="INTEGER" />
+    <result column="leaderShipoption" property="leaderShipoption" jdbcType="VARCHAR" />
+    <result column="isLeave" property="isLeave" jdbcType="BIT" />
+    <result column="state" property="state" jdbcType="BIT" />
+    <result column="reason" property="reason" jdbcType="VARCHAR" />
+
+    <association property="leaveClass" javaType="com._520it.crm.domain.LeaveClass" columnPrefix="ls_">
+        <result property="id" column="id"></result>
+        <result property="name" column="name"></result>
+    </association>
+    <association property="employee" javaType="com._520it.crm.domain.Employee" columnPrefix="e_">
+        <result property="id" column="id"></result>
+        <result property="sn" column="sn"></result>
+        <result property="username" column="username"></result>
+    </association>
+
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from leaver
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com._520it.crm.domain.Leaver" useGeneratedKeys="true" keyProperty="id" >
+    insert into leaver (leaveClass_id, leavefor, leaveTimes,
+      leaveTimed, leaveDuration, leaderShipoption, 
+      isLeave, state, reason,employee_id)
+    values (#{leaveClass.id}, #{leavefor,jdbcType=VARCHAR}, #{leaveTimes,jdbcType=DATE},
+      #{leaveTimed,jdbcType=DATE}, #{leaveDuration,jdbcType=INTEGER}, #{leaderShipoption,jdbcType=VARCHAR}, 
+      #{isLeave,jdbcType=BIT}, #{state,jdbcType=BIT}, #{reason,jdbcType=VARCHAR},#{employee.id})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com._520it.crm.domain.Leaver" >
+    update leaver
+    set
+      state = #{state,jdbcType=BIT},
+      reason = #{reason,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, leaveClass_id, leavefor, leaveTimes, leaveTimed, leaveDuration, leaderShipoption,
+    isLeave, state, reason,employee_id
+    from leaver
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, leaveClass_id, leavefor, leaveTimes, leaveTimed, leaveDuration, leaderShipoption,
+    isLeave, state, reason,employee_id
+    from leaver
+  </select>
+
+  <sql id="where_sql">
+    <where>
+    <if test="sn!=null and sn!=''">
+      and
+      e.sn like concat('%',#{sn},'%')
+    </if>
+    <if test="username!=null and username!=''">
+      and e.username like concat('%',#{username},'%')
+    </if>
+    </where>
+  </sql>
+
+  <!-- 查询总结果数 -->
+  <select id="queryPageCount" resultType="long">
+    select count(l.id) from  leaver l LEFT  JOIN  employee  e ON l.employee_id = e.id
+    LEFT JOIN  leaveclass ls ON  ls.id = l.leaveClass_id
+    <include refid="where_sql"/>
+  </select>
+
+  <!-- 查询结果集 -->
+  <select id="queryPageResult" resultMap="BaseResultMap">
+    select l.* ,e.id e_id ,e.sn e_sn ,e.username e_username ,ls.id ls_id ,ls.name ls_name
+    from  leaver l LEFT  JOIN  employee  e ON l.employee_id = e.id
+    LEFT JOIN  leaveclass ls ON  ls.id = l.leaveClass_id
+    <include refid="where_sql"/>
+    limit #{start},#{rows}
+  </select>
+
+
+</mapper>

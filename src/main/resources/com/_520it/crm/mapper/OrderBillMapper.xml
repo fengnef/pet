@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com._520it.crm.mapper.OrderBillMapper">
+    <resultMap id="BaseResultMap" type="com._520it.crm.domain.OrderBill">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="sn" property="sn" jdbcType="VARCHAR"/>
+        <result column="inputTime" property="inputtime" jdbcType="DATE"/>
+        <result column="minUnit" property="minunit" jdbcType="VARCHAR"/>
+        <result column="maxUnit" property="maxunit" jdbcType="VARCHAR"/>
+        <result column="count" property="count"/>
+        <result column="totalAmount" property="totalamount" jdbcType="DECIMAL"/>
+        <result column="salePrice" property="saleprice" jdbcType="DECIMAL"/>
+        <result column="discount" property="discount"/>
+        <result column="costPrice" property="costPrice" jdbcType="DECIMAL"/>
+        <result column="productName" property="productName"/>
+        <result column="productCategory" property="productCategory"/>
+        <result column="productSpecification" property="productSpecification"/>
+        <result column="productBrand" property="productBrand"/>
+        <result column="warrantyDate" property="warrantyDate"/>
+        <result column="productDate" property="productDate"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from orderbill
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com._520it.crm.domain.OrderBill" useGeneratedKeys="true" keyProperty="id">
+    insert into orderbill (sn, inputTime,
+      minUnit, maxUnit, count,
+      totalAmount, salePrice, discount,costPrice,productSn,productName,productCategory,productSpecification,productBrand,warrantyDate,productDate
+      )
+    values (#{sn,jdbcType=VARCHAR}, #{inputtime,jdbcType=DATE},
+      #{minunit,jdbcType=VARCHAR}, #{maxunit,jdbcType=VARCHAR}, #{count,jdbcType=INTEGER},
+      #{totalamount,jdbcType=DECIMAL}, #{saleprice,jdbcType=DECIMAL}, #{discount,jdbcType=DECIMAL},#{costPrice},
+      #{productSn},#{productName},
+      #{productCategory},#{productSpecification},#{productBrand},#{warrantyDate},#{productDate}
+      )
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com._520it.crm.domain.OrderBill">
+    update orderbill
+    set sn = #{sn,jdbcType=VARCHAR},
+      inputTime = #{inputtime,jdbcType=DATE},
+      minUnit = #{minunit,jdbcType=VARCHAR},
+      maxUnit = #{maxunit,jdbcType=VARCHAR},
+      count = #{count,jdbcType=INTEGER},
+      totalAmount = #{totalamount,jdbcType=DECIMAL},
+      salePrice = #{saleprice,jdbcType=DECIMAL},
+      discount = #{discount,jdbcType=DECIMAL},
+      costPrice=#{costPrice},
+      productSpecification=#{productSpecification},
+     productSn= #{productSn},
+     productBrand=#{productBrand},
+     warrantyDate=#{warrantyDate},
+     productDate=#{productDate}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select *
+    from orderbill
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+    select *
+    from orderbill
+  </select>
+    <!-- 查询总结果数 -->
+    <select id="queryPageCount" resultType="long">
+        select count(*) from orderBill
+        <include refid="where_sql"/>
+    </select>
+    <!-- 查询结果集 -->
+    <select id="queryPageResult" resultMap="BaseResultMap">
+        select *
+        from orderBill
+        <include refid="where_sql"/>
+        limit #{start},#{rows}
+    </select>
+    <sql id="where_sql">
+        <where></where>
+    </sql>
+</mapper>

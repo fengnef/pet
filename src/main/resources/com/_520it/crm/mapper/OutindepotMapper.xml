@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com._520it.crm.mapper.OutindepotMapper" >
+  <resultMap id="BaseResultMap" type="com._520it.crm.domain.Outindepot" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="BIT" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from outindepot
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com._520it.crm.domain.Outindepot" useGeneratedKeys="true" keyProperty="id" >
+    insert into outindepot (name, state)
+    values (#{name,jdbcType=VARCHAR}, #{state,jdbcType=BIT})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com._520it.crm.domain.Outindepot" >
+    update outindepot
+    set name = #{name,jdbcType=VARCHAR},
+      state = #{state,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, name, state
+    from outindepot
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, name, state
+    from outindepot
+  </select>
+
+  <sql id="base_where">
+    <where>
+      <if test="keyword!=null and keyword!=''">
+        name like concat('%',#{keyword},'%')
+      </if>
+    </where>
+  </sql>
+
+  <select id="queryPageCount" resultType="Long">
+    SELECT count(*) FROM outindepot
+    <include refid="base_where"/>
+  </select>
+
+  <select id="queryPageResult" resultMap="BaseResultMap">
+    SELECT * FROM outindepot
+    <include refid="base_where"/>
+    LIMIT #{start},#{rows}
+  </select>
+</mapper>

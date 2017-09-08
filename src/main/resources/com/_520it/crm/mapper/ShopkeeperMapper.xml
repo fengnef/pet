@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com._520it.crm.mapper.ShopkeeperMapper">
+    <resultMap id="BaseResultMap" type="com._520it.crm.domain.Shopkeeper">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="storeHead" property="storehead" jdbcType="VARCHAR"/>
+        <result column="storeName" property="storeName" jdbcType="VARCHAR"/>
+        <result column="contactMobile" property="contactmobile" jdbcType="BIGINT"/>
+        <result column="storeFax" property="storefax" jdbcType="BIGINT"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="setupTime" property="setuptime" jdbcType="DATE"/>
+        <result column="storeIntroduce" property="storeintroduce" jdbcType="VARCHAR"/>
+        <result column="picture" property="picture" jdbcType="VARCHAR"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="storIntroduce" property="storintroduce" jdbcType="VARCHAR"/>
+        <result column="businessType_id" property="businesstype" jdbcType="BIGINT"/>
+        <result column="admin" property="admin" jdbcType="BIT" />
+        <result column="logintime" property="logintime"></result>
+        <collection property="roles" ofType="com._520it.crm.domain.Role" column="id" select="com._520it.crm.mapper.RoleMapper.getRoleByShopkeeperId"></collection>
+    </resultMap>
+    <resultMap id="AllResultMap" type="com._520it.crm.domain.Shopkeeper">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="storeHead" property="storehead" jdbcType="VARCHAR"/>
+        <result column="storeName" property="storeName" jdbcType="VARCHAR"/>
+        <result column="contactMobile" property="contactmobile" jdbcType="BIGINT"/>
+        <result column="storeFax" property="storefax" jdbcType="BIGINT"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="setupTime" property="setuptime" jdbcType="DATE"/>
+        <result column="storeIntroduce" property="storeintroduce" jdbcType="VARCHAR"/>
+        <result column="picture" property="picture" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="BIGINT"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="storIntroduce" property="storintroduce" jdbcType="VARCHAR"/>
+        <result column="businessType_id" property="businesstype" jdbcType="BIGINT"/>
+        <result column="admin" property="admin" jdbcType="BIT" />
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from shopkeeper
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com._520it.crm.domain.Shopkeeper" useGeneratedKeys="true" keyProperty="id">
+    insert into shopkeeper (storeHead, contactMobile, storeFax, 
+      province, setupTime, storeIntroduce, 
+      picture, password, username,
+      storIntroduce,storeName,businessType_id,admin )
+    values (#{storehead,jdbcType=VARCHAR}, #{contactmobile,jdbcType=BIGINT}, #{storefax,jdbcType=BIGINT},
+      #{province,jdbcType=VARCHAR}, #{setuptime,jdbcType=DATE}, #{storeintroduce,jdbcType=VARCHAR}, 
+      #{picture,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR},
+      #{storintroduce,jdbcType=VARCHAR},#{storeName,jdbcType=VARCHAR}, #{businesstype,jdbcType=BIGINT}, #{admin,jdbcType=BIT})
+  </insert>
+
+    <insert id="insertShopeekerRole"  parameterType="com._520it.crm.domain.Shopkeeper" useGeneratedKeys="true" keyProperty="id">
+      insert into shopkeeper (storeHead, contactMobile,
+       setupTime,
+       password, username
+       )
+    values (#{storehead,jdbcType=VARCHAR}, #{contactmobile,jdbcType=BIGINT},
+       #{setuptime,jdbcType=DATE},
+       #{password,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR},
+     })
+    </insert>
+    <update id="update"  parameterType="com._520it.crm.domain.Shopkeeper" >
+       update shopkeeper
+      set storeHead = #{storehead,jdbcType=VARCHAR},
+      contactMobile = #{contactmobile,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+    </update>
+
+
+
+
+    <update id="updateByPrimaryKey" parameterType="com._520it.crm.domain.Shopkeeper">
+    update shopkeeper
+    set storeHead = #{storehead,jdbcType=VARCHAR},
+      storeName =#{storeName},
+      contactMobile = #{contactmobile,jdbcType=BIGINT},
+      storeFax = #{storefax,jdbcType=BIGINT},
+      province = #{province,jdbcType=VARCHAR},
+      setupTime = #{setuptime,jdbcType=DATE},
+      storeIntroduce = #{storeintroduce,jdbcType=VARCHAR},
+      picture = #{picture,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      username = #{username,jdbcType=VARCHAR},
+      storIntroduce = #{storintroduce,jdbcType=VARCHAR},
+      businessType_id = #{businesstype,jdbcType=BIGINT},
+      admin = #{admin,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select id, storeHead,storeName, contactMobile, storeFax, province, setupTime, storeIntroduce,
+    picture, password, username, storIntroduce, businessType_id,admin
+    from shopkeeper
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+    select id, storeHead, storeName,contactMobile, storeFax, province, setupTime, storeIntroduce,
+    picture, username, storIntroduce, businessType_id,admin
+    from shopkeeper
+  </select>
+
+
+
+    <sql id="where_sql">
+        <where>
+
+            <if test="id!=null">
+                and e.id = #{id}
+            </if>
+        </where>
+    </sql>
+
+
+
+    <select id="queryPageCount" resultType="long">
+        select count(s.id) from shopkeeper s
+        <include refid="where_sql"></include>
+    </select>
+
+    <select id="queryPageResult" resultMap="BaseResultMap">
+        select * from shopkeeper s
+        <include refid="where_sql"></include>
+        limit #{start},#{rows}
+    </select>
+
+
+    <select id="getShopkeeperByUsername" resultMap="AllResultMap">
+        select * from shopkeeper where username = #{username}
+    </select>
+
+    <!-- 处理角色和权限中间表,关联关系 -->
+    <insert id="insertRelation">
+        insert into shopkeeper_role(shopkeeper_id,role_id) values(#{shopkeeperId},#{roleId})
+    </insert>
+
+    <!-- 打破关系 -->
+    <delete id="deleteRelation">
+        delete from shopkeeper_role where shopkeeper_id = #{shopkeeperId}
+    </delete>
+
+    <update id="setLoginTime">
+      UPDATE shopkeeper SET  logintime = #{logintime} where id = #{shopkeeperId}
+    </update>
+<!--更新店铺基本信息-->
+    <update id="updateSheet">
+   UPDATE shopkeeper
+    set storeHead = #{storehead,jdbcType=VARCHAR},
+      storeName =#{storeName},
+      contactMobile = #{contactmobile,jdbcType=BIGINT},
+      storeFax = #{storefax,jdbcType=BIGINT},
+      province = #{province,jdbcType=VARCHAR},
+      storeIntroduce = #{storeintroduce,jdbcType=VARCHAR},
+      storIntroduce = #{storintroduce,jdbcType=VARCHAR}
+     where id = #{id}
+    </update>
+<!--店主注册-->
+    <insert id="inserShopkeeper">
+
+
+    </insert>
+</mapper>

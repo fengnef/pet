@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com._520it.crm.mapper.PositionNameMapper" >
+  <resultMap id="BaseResultMap" type="com._520it.crm.domain.PositionName" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="positionName" property="positionname" jdbcType="VARCHAR" />
+    <result column="postallowance" property="postallowance" jdbcType="DECIMAL" />
+    <result column="trafficsubsidies" property="trafficsubsidies" jdbcType="DECIMAL" />
+    <result column="phonesubsidies" property="phonesubsidies" jdbcType="DECIMAL" />
+    <result column="subsidizedmeals" property="subsidizedmeals" jdbcType="DECIMAL" />
+    <result column="fullTime" property="fulltime" jdbcType="DECIMAL" />
+    <result column="commission" property="commission" jdbcType="DECIMAL" />
+  </resultMap>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from positionname
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com._520it.crm.domain.PositionName" useGeneratedKeys="true" keyProperty="id" >
+    insert into positionname (positionName, postallowance, trafficsubsidies, 
+      phonesubsidies, subsidizedmeals, fullTime, 
+      commission)
+    values (#{positionname,jdbcType=VARCHAR}, #{postallowance,jdbcType=DECIMAL}, #{trafficsubsidies,jdbcType=DECIMAL}, 
+      #{phonesubsidies,jdbcType=DECIMAL}, #{subsidizedmeals,jdbcType=DECIMAL}, #{fulltime,jdbcType=DECIMAL}, 
+      #{commission,jdbcType=DECIMAL})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com._520it.crm.domain.PositionName" >
+    update positionname
+    set positionName = #{positionname,jdbcType=VARCHAR},
+      postallowance = #{postallowance,jdbcType=DECIMAL},
+      trafficsubsidies = #{trafficsubsidies,jdbcType=DECIMAL},
+      phonesubsidies = #{phonesubsidies,jdbcType=DECIMAL},
+      subsidizedmeals = #{subsidizedmeals,jdbcType=DECIMAL},
+      fullTime = #{fulltime,jdbcType=DECIMAL},
+      commission = #{commission,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, positionName, postallowance, trafficsubsidies, phonesubsidies, subsidizedmeals, 
+    fullTime, commission
+    from positionname
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, positionName, postallowance, trafficsubsidies, phonesubsidies, subsidizedmeals, 
+    fullTime, commission
+    from positionname
+  </select>
+
+  <sql id="where_sql"></sql>
+
+  <!-- 查询总结果数 -->
+  <select id="queryPageCount" resultType="long">
+    select count(*) from positionname
+    <include refid="where_sql"/>
+  </select>
+
+  <!-- 查询结果集 -->
+  <select id="queryPageResult" resultMap="BaseResultMap">
+    select * from positionname
+    <include refid="where_sql"/>
+    limit #{start},#{rows}
+  </select>
+
+
+
+</mapper>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com._520it.crm.mapper.BrandMapper">
+    <resultMap id="BaseResultMap" type="com._520it.crm.domain.Brand">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="brandOriginName" property="brandoriginname" jdbcType="VARCHAR"/>
+        <result column="brandName" property="brandname" jdbcType="VARCHAR"/>
+        <result column="state" property="state" jdbcType="BIT"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        DELETE FROM brand
+        WHERE id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com._520it.crm.domain.Brand" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO brand (brandOriginName, brandName, state
+        )
+        VALUES (#{brandoriginname,jdbcType=VARCHAR}, #{brandname,jdbcType=VARCHAR}, #{state,jdbcType=BIT}
+        )
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com._520it.crm.domain.Brand">
+        UPDATE brand
+        SET brandOriginName = #{brandoriginname,jdbcType=VARCHAR},
+            brandName       = #{brandname,jdbcType=VARCHAR},
+            state           = #{state,jdbcType=BIT}
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+            id,
+            brandOriginName,
+            brandName,
+            state
+        FROM brand
+        WHERE id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT
+            id,
+            brandOriginName,
+            brandName,
+            state
+        FROM brand
+    </select>
+    <sql id="base_where">
+        <where>
+            <if test="keyword!=null and keyword!=''">
+                (brandOriginName like concat('%',#{keyword},'%') or
+                brandName like concat('%',#{keyword},'%'))
+            </if>
+        </where>
+    </sql>
+    <select id="queryPageCount" resultType="Long">
+        SELECT count(*) FROM brand
+        <include refid="base_where"/>
+    </select>
+
+    <select id="queryPageResult" resultMap="BaseResultMap">
+        SELECT id, brandOriginName, brandName, state
+            FROM brand
+        <include refid="base_where"/>
+        LIMIT #{start},#{rows}
+    </select>
+
+</mapper>

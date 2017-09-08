@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com._520it.crm.mapper.VipmemberMapper" >
+  <resultMap id="BaseResultMap" type="com._520it.crm.domain.Vipmember" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="VIPName" property="vipname" jdbcType="VARCHAR" />
+    <result column="VIPMemberProportion" property="vipmemberproportion" jdbcType="VARCHAR" />
+    <result column="VIPServerProption" property="vipserverproption" jdbcType="DOUBLE" />
+    <result column="VIPstart" property="vipstart" jdbcType="TINYINT" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from vipmember
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com._520it.crm.domain.Vipmember" useGeneratedKeys="true" keyProperty="id" >
+    insert into vipmember (VIPName, VIPMemberProportion, VIPServerProption, 
+      VIPstart)
+    values (#{vipname,jdbcType=VARCHAR}, #{vipmemberproportion,jdbcType=VARCHAR}, #{vipserverproption,jdbcType=DOUBLE}, 
+      #{vipstart,jdbcType=TINYINT})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com._520it.crm.domain.Vipmember" >
+    update vipmember
+    set VIPName = #{vipname,jdbcType=VARCHAR},
+      VIPMemberProportion = #{vipmemberproportion,jdbcType=VARCHAR},
+      VIPServerProption = #{vipserverproption,jdbcType=DOUBLE},
+      VIPstart = #{vipstart,jdbcType=TINYINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, VIPName, VIPMemberProportion, VIPServerProption, VIPstart
+    from vipmember
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, VIPName, VIPMemberProportion, VIPServerProption, VIPstart
+    from vipmember
+  </select>
+
+  <sql id="base_where">
+    <where>
+      <if test="keyword!=null and keyword!=''">
+        vipname like concat('%',#{keyword},'%')
+      </if>
+    </where>
+  </sql>
+  <select id="queryPageCount" resultType="Long">
+    SELECT count(*) FROM vipmember
+    <include refid="base_where"/>
+  </select>
+
+  <select id="queryPageResult" resultMap="BaseResultMap">
+    SELECT * FROM vipmember
+    <include refid="base_where"/>
+    LIMIT #{start},#{rows}
+  </select>
+</mapper>

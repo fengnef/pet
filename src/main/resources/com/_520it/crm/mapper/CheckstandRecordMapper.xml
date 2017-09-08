@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com._520it.crm.mapper.CheckstandRecordMapper">
+    <resultMap id="BaseResultMap" type="com._520it.crm.domain.CheckstandRecord">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="sn" property="ordersn" jdbcType="VARCHAR"/>
+        <result column="orderTime" property="ordertime" jdbcType="DATE"/>
+        <result column="productCount" property="productcount" jdbcType="INTEGER"/>
+        <result column="monetary" property="monetary" jdbcType="DECIMAL"/>
+
+        <association property="employee" javaType="com._520it.crm.domain.Employee" columnPrefix="e_">
+            <id column="id" property="id"/>
+            <result column="username" property="username"/>
+        </association>
+        <association property="member" javaType="com._520it.crm.domain.Member" columnPrefix="m_">
+            <id column="id" property="id"/>
+            <result column="membernumber" property="membernumber"/>
+        </association>
+        <association property="shop" javaType="com._520it.crm.domain.Shop" columnPrefix="s_">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+    </resultMap>
+
+    <insert id="insert" parameterType="com._520it.crm.domain.CheckstandRecord" useGeneratedKeys="true" keyProperty="id">
+    insert into checkstandrecord (sn, orderTime, productCount, 
+      monetary, member_id, shop_id,
+      employee_id)
+    values (#{sn,jdbcType=VARCHAR}, #{ordertime,jdbcType=DATE}, #{productcount,jdbcType=INTEGER}, 
+      #{monetary,jdbcType=DECIMAL}, #{menber.id,jdbcType=INTEGER}, #{shop.id,jdbcType=INTEGER},
+      #{employee.id,jdbcType=INTEGER})
+  </insert>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select id, sn, orderTime, productCount, monetary, member_id, shop_id, employee_id
+    from checkstandrecord
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+    SELECT csr.id id,csr.monetary monetary,csr.sn sn,csr.orderTime orderTime,
+       csr.productCount productcount,
+       e.username e_username,s.name s_name,m.memberNumber m_membernumber
+    FROM checkstandrecord csr
+    LEFT JOIN employee e ON csr.employee_id = e.id
+    LEFT JOIN shop s  ON csr.shop_id = s.id
+    LEFT JOIN member m ON csr.member_id = m.id
+  </select>
+
+
+    <sql id="where_sql">
+        <where>
+            <if test="ordersn!=null and ordersn!=''">
+                and
+                csr.sn like concat('%',#{ordersn},'%')
+            </if>
+            <if test="currentDate !=null">
+                and DATE_FORMAT(csr.orderTime,'%Y%m') = DATE_FORMAT(#{currentDate},'%Y%m')
+            </if>
+        </where>
+    </sql>
+    <select id="queryPageCount" resultType="long">
+        select count(csr.id) from checkstandrecord csr
+        <include refid="where_sql"></include>
+    </select>
+
+    <!-- 查询结果集 -->
+    <select id="queryPageResult" resultMap="BaseResultMap">
+        SELECT csr.id id,csr.monetary monetary,csr.sn sn,csr.orderTime orderTime,
+        csr.productCount productcount,
+        e.username e_username,s.name s_name,m.memberNumber m_membernumber
+        FROM checkstandrecord csr
+        LEFT JOIN employee e ON csr.employee_id = e.id
+        LEFT JOIN shop s  ON csr.shop_id = s.id
+        LEFT JOIN member m ON csr.member_id = m.id
+        <include refid="where_sql"/>
+        limit #{start},#{rows}
+    </select>
+</mapper>

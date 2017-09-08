@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com._520it.crm.mapper.ProductMapper">
+    <resultMap id="BaseResultMap" type="com._520it.crm.domain.Product">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="sn" property="sn" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="Allergens" property="allergens" jdbcType="VARCHAR"/>
+        <result column="salePrice" property="saleprice" jdbcType="DECIMAL"/>
+        <result column="state" property="state" jdbcType="BIT"/>
+        <association property="productcategory" javaType="com._520it.crm.domain.ProductCategory">
+            <id column="id" property="id"/>
+            <result column="category" property="category"/>
+        </association>
+        <association property="brand" javaType="com._520it.crm.domain.Brand">
+            <id column="id" property="id"/>
+            <result column="brandName" property="brandname"/>
+        </association>
+        <association property="manufacturer" javaType="com._520it.crm.domain.Manufacturer">
+            <id column="id" property="id"/>
+            <result column="productOriginName" property="productoriginname"/>
+        </association>
+        <association property="productpomponent" javaType="com._520it.crm.domain.ProductPomponent">
+            <id column="id" property="id"/>
+            <result column="pomponentName" property="pomponentname"/>
+        </association>
+    </resultMap>
+    <resultMap id="BaseMap" type="com._520it.crm.domain.Product">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+    </resultMap>
+
+    <resultMap id="ProductResultMap" type="com._520it.crm.domain.Product">
+        <id column="p_id" jdbcType="BIGINT" property="id"/>
+        <result column="p_sn" jdbcType="VARCHAR" property="sn"/>
+        <result column="p_name" jdbcType="VARCHAR" property="name"/>
+        <association property="employee" javaType="com._520it.crm.domain.Employee" columnPrefix="e_">
+            <id property="id" column="id"/>
+            <result column="username" property="username"/>
+        </association>
+        <association property="productstock" javaType="com._520it.crm.domain.ProductStock" columnPrefix="ps_">
+            <id property="id" column="id"/>
+            <result column="sn" property="sn"/>
+        </association>
+        <association property="incomebillitem" javaType="com._520it.crm.domain.StockIncomeBillItem" columnPrefix="sibi_">
+            <id property="id" column="id"/>
+            <result column="mp" property="memberprice"/>
+            <result column="sp" property="saleprice"/>
+        </association>
+
+    </resultMap>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from product
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" keyProperty="id" parameterType="com._520it.crm.domain.Product" useGeneratedKeys="true">
+    insert into product (sn, name, productCategoryId,
+      brandId, manufacturerId, productPomponentId,
+      Allergens, salePrice, state,
+      productstock_id, stockincomebillitem_id,
+      employee_id)
+    values (#{sn,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{productcategory.id,jdbcType=BIGINT},
+      #{brand.id,jdbcType=BIGINT}, #{manufacturer.id,jdbcType=BIGINT}, #{productpomponent.id,jdbcType=BIGINT},
+      #{allergens,jdbcType=VARCHAR}, #{saleprice,jdbcType=DECIMAL}, #{state,jdbcType=BIT},
+      #{productstock.id,jdbcType=INTEGER}, #{incomebillitem.id,jdbcType=INTEGER},
+      #{employee.id,jdbcType=INTEGER})
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com._520it.crm.domain.Product">
+    update product
+    set sn = #{sn,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      productCategoryId = #{productcategory.id,jdbcType=BIGINT},
+      brandId = #{brand.id,jdbcType=BIGINT},
+      manufacturerId = #{manufacturer.id,jdbcType=BIGINT},
+      productPomponentId = #{productpomponent.id,jdbcType=BIGINT},
+      Allergens = #{allergens,jdbcType=VARCHAR},
+      salePrice = #{saleprice,jdbcType=DECIMAL},
+      state = #{state,jdbcType=BIT},
+      productstock_id = #{productstock.id,jdbcType=INTEGER},
+      stockincomebillitem_id = #{stockincomebillitem.id,jdbcType=INTEGER},
+      employee_id = #{employee.id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, sn, name, productCategoryId, brandId, manufacturerId, productPomponentId, 
+    Allergens, salePrice, state, productstock_id, stockincomebillitem_id, employee_id
+    from product
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+    select id, sn, name, productCategoryId, brandId, manufacturerId, productPomponentId, 
+    Allergens, salePrice, state, productstock_id, stockincomebillitem_id, employee_id
+    from product
+  </select>
+
+    <select id="selectCheckstand" resultMap="ProductResultMap">
+    SELECT ps.sn ps_sn,p.sn p_sn,p.name p_name,sibi.salePrice sibi_sp,
+      sibi.memberPrice sibi_mp,e.username e_username
+    FROM product p
+    LEFT JOIN productstock ps
+    ON p.productstock_id = ps.id
+    LEFT JOIN employee e ON p.employee_id = e.id
+    LEFT JOIN stockincomebillitem sibi ON p.stockincomebillitem_id = sibi.id
+  </select>
+
+    <sql id="base_where">
+      <where>
+          <if test="productName!=null and productName!=''">
+              and p.name like concat('%',#{productName},'%')
+          </if>
+          <if test="categoryId!=null">
+              and pc.id = #{categoryId}
+          </if>
+          <if test="brandId!=null">
+              and b.id = #{brandId}
+          </if>
+          <if test="pomponent!=null and pomponent!=''">
+              and pp.pomponentName like concat('%',#{pomponent},'%')
+          </if>
+      </where>
+    </sql>
+    <sql id="base_column">
+        p.id, p.sn, p.name, pc.category, b.brandName, m.productOriginName, pp.pomponentName,
+        p.Allergens, p.salePrice, p.state
+    </sql>
+    <sql id="base_form">
+        product p LEFT JOIN productcategory pc ON p.productCategoryId=pc.id
+        LEFT JOIN brand b ON p.brandId=b.id
+        LEFT JOIN manufacturer m ON p.manufacturerId=m.id
+        LEFT JOIN productpomponent pp ON p.productPomponentId=pp.id
+    </sql>
+
+    <select id="queryPageCount" resultType="Long">
+        SELECT count(*)
+        FROM
+        <include refid="base_form"/>
+        <include refid="base_where"/>
+    </select>
+
+    <select id="queryPageResult" resultMap="BaseResultMap">
+        SELECT
+        <include refid="base_column"/>
+        FROM
+        <include refid="base_form"/>
+        <include refid="base_where"/>
+        LIMIT #{start},#{rows}
+    </select>
+
+
+    <!--根据商品69码查商品-->
+    <select id="getProductBySn" resultMap="BaseResultMap">
+        SELECT *
+        FROM  product
+        WHERE sn =#{sn}
+    </select>
+</mapper>

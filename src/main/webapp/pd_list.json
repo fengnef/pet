@@ -1,0 +1,92 @@
+{
+  "total" : 11,
+  "rows" : [{
+    "productName" : "皇家狗粮",
+    "stockIncomeAveragePrice" : 1000,
+    "stockOutcomeAveragePrice" : 1500,
+    "salePrice" : 1500,
+    "saleCount" : 10,
+    "salePriceCount" : 15000,
+    "profit" : "5000"
+  },{
+    "productName" : "美味三文鱼",
+    "stockIncomeAveragePrice" : 1000,
+    "stockOutcomeAveragePrice" : 200,
+    "salePrice" : 2000,
+    "saleCount" : 10,
+    "salePriceCount" : 20000,
+    "profit" : "10000"
+  },{
+    "productName" : "佩玛思特奶糕",
+    "stockIncomeAveragePrice" : 2000,
+    "stockOutcomeAveragePrice" : 2200,
+    "salePrice" : 2200,
+    "saleCount" : 5,
+    "salePriceCount" : 11000,
+    "profit" : "1000"
+  },{
+    "productName" : "牧康乐海洋鱼",
+    "stockIncomeAveragePrice" : 500,
+    "stockOutcomeAveragePrice" : 1000,
+    "salePrice" : 1000,
+    "saleCount" : 3,
+    "salePriceCount" : 3000,
+    "profit" : "1500"
+  },{
+    "productName" : "比瑞吉幼猫粮",
+    "stockIncomeAveragePrice" : 300,
+    "stockOutcomeAveragePrice" : 600,
+    "salePrice" : 600,
+    "saleCount" : 20,
+    "salePriceCount" : 6000,
+    "profit" : "6000"
+  },{
+    "productName" : "可莉丝汀进口鱼肉",
+    "stockIncomeAveragePrice" : 2000,
+    "stockOutcomeAveragePrice" : 2200,
+    "salePrice" : 2200,
+    "saleCount" : 8,
+    "salePriceCount" : 176000,
+    "profit" : "1600"
+  },{
+    "productName" : "诺瑞牛油果",
+    "stockIncomeAveragePrice" : 200,
+    "stockOutcomeAveragePrice" : 300,
+    "salePrice" : 300,
+    "saleCount" : 30,
+    "salePriceCount" : 9000,
+    "profit" : "3000"
+  },{
+    "productName" : "北美之悦",
+    "stockIncomeAveragePrice" : 900,
+    "stockOutcomeAveragePrice" : 1500,
+    "salePrice" : 1500,
+    "saleCount" : 6,
+    "salePriceCount" : 9000,
+    "profit" : "3600"
+  },{
+    "productName" : "Orijen六种鱼",
+    "stockIncomeAveragePrice" :1200,
+    "stockOutcomeAveragePrice" : 1800,
+    "salePrice" : 1800,
+    "saleCount" : 12,
+    "salePriceCount" : 21600,
+    "profit" : "7200"
+  },{
+    "productName" : "优朗猫粮",
+    "stockIncomeAveragePrice" : 400,
+    "stockOutcomeAveragePrice" : 600,
+    "salePrice" : 600,
+    "saleCount" : 10,
+    "salePriceCount" : 6000,
+    "profit" : "2000"
+  },{
+    "productName" : "阿莫西林",
+    "stockIncomeAveragePrice" : 200,
+    "stockOutcomeAveragePrice" : 600,
+    "salePrice" : 600,
+    "saleCount" : 20,
+    "salePriceCount" : 12000,
+    "profit" : "8000"
+  }
+  ]}

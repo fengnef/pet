@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com._520it.crm.mapper.PetkindandcategoryMapper" >
+  <resultMap id="BaseResultMap" type="com._520it.crm.domain.Petkindandcategory" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="petCategory" property="petcategory" jdbcType="VARCHAR" />
+    <result column="petkind" property="petkind" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="BIT" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from petkindandcategory
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com._520it.crm.domain.Petkindandcategory" useGeneratedKeys="true" keyProperty="id" >
+    insert into petkindandcategory (petCategory, petkind, state
+      )
+    values (#{petcategory,jdbcType=VARCHAR}, #{petkind,jdbcType=VARCHAR}, #{state,jdbcType=BIT}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com._520it.crm.domain.Petkindandcategory" >
+    update petkindandcategory
+    set petCategory = #{petcategory,jdbcType=VARCHAR},
+      petkind = #{petkind,jdbcType=VARCHAR},
+      state = #{state,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, petCategory, petkind, state
+    from petkindandcategory
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, petCategory, petkind, state
+    from petkindandcategory
+  </select>
+
+  <sql id="base_where">
+    <where>
+      <if test="keyword!=null and keyword!=''">
+        (petkind like concat('%',#{keyword},'%') or
+        petcategory like concat('%',#{keyword},'%'))
+      </if>
+    </where>
+  </sql>
+
+  <select id="queryPageCount" resultType="Long">
+    SELECT count(*) FROM petkindandcategory
+    <include refid="base_where"/>
+  </select>
+  <select id="queryPageResult" resultMap="BaseResultMap">
+    SELECT * FROM petkindandcategory
+    <include refid="base_where"/>
+    LIMIT #{start},#{rows}
+  </select>
+</mapper>

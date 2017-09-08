@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com._520it.crm.mapper.SufficientitemMapper">
+    <resultMap id="BaseResultMap" type="com._520it.crm.domain.Sufficientitem">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="rechargeNumber" property="rechargenumber" jdbcType="VARCHAR"/>
+        <result column="userGroupcode" property="usergroupcode" jdbcType="VARCHAR"/>
+        <result column="userGroupname" property="usergroupname" jdbcType="VARCHAR"/>
+        <result column="rechargeTime" property="rechargetime" jdbcType="DATE"/>
+        <result column="rechargePrice" property="rechargeprice" jdbcType="DECIMAL"/>
+        <result column="itemRemarks" property="itemremarks" jdbcType="VARCHAR"/>
+        <association property="membername" javaType="com._520it.crm.domain.Member" columnPrefix="m_">
+            <id column="id" property="id" jdbcType="BIGINT"/>
+            <result column="memberName" property="membername" jdbcType="BIGINT"/>
+            <result column="memberNumber" property="membernumber" jdbcType="BIGINT"/>
+        </association>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from sufficientitem
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com._520it.crm.domain.Sufficientitem" useGeneratedKeys="true" keyProperty="id">
+    insert into sufficientitem (rechargeNumber, userGroupcode, userGroupname, 
+      rechargeTime, rechargePrice, memberName_id, 
+      itemRemarks)
+    values (#{rechargenumber,jdbcType=VARCHAR}, #{usergroupcode,jdbcType=VARCHAR}, #{usergroupname,jdbcType=VARCHAR}, 
+      #{rechargetime,jdbcType=DATE}, #{rechargeprice,jdbcType=DECIMAL}, #{membername.id,jdbcType=BIGINT},
+      #{itemremarks,jdbcType=VARCHAR})
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com._520it.crm.domain.Sufficientitem">
+    update sufficientitem
+    set rechargeNumber = #{rechargenumber,jdbcType=VARCHAR},
+      userGroupcode = #{usergroupcode,jdbcType=VARCHAR},
+      userGroupname = #{usergroupname,jdbcType=VARCHAR},
+      rechargeTime = #{rechargetime,jdbcType=DATE},
+      rechargePrice = #{rechargeprice,jdbcType=DECIMAL},
+      memberName_id = #{membername.id,jdbcType=BIGINT},
+      itemRemarks = #{itemremarks,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select id, rechargeNumber, userGroupcode, userGroupname, rechargeTime, rechargePrice, 
+    memberName_id, itemRemarks
+    from sufficientitem
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+    select id, rechargeNumber, userGroupcode, userGroupname, rechargeTime, rechargePrice, 
+    memberName_id, itemRemarks
+    from sufficientitem
+  </select>
+
+    <select id="selectSufficientitem" resultMap="BaseResultMap">
+    SELECT s.*,m.id m_id,m.memberName m_memberName,m.memberNumber m_memberNumber
+     FROM sufficientitem s LEFT JOIN member m ON s.memberName_id = m.id
+        <include refid="base_where"></include>
+        limit #{start},#{rows}
+  </select>
+
+    <select id="queryPageCount" resultType="long">
+    SELECT count(s.id)  FROM sufficientitem s LEFT JOIN member m ON s.memberName_id = m.id
+        <include refid="base_where"></include>
+  </select>
+
+    <sql id="base_where">
+        <where>
+        <if test="menberName!=null and menberName!=''">
+           AND   m.membernumber LIKE concat('%',#{menberName},'%')
+        </if>
+        <if test="membernumber!=null and membernumber!=''">
+            AND  m.membername LIKE concat('%',#{membernumber},'%')
+        </if>
+        <if test="rechargenumber!=null and rechargenumber!=''">
+            AND s.rechargenumber LIKE concat('%',#{rechargenumber},'%')
+        </if>
+
+        </where>
+    </sql>
+
+
+</mapper>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com._520it.crm.mapper.PetMapper">
+    <resultMap id="BaseResultMap" type="com._520it.crm.domain.Pet">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="petName" property="petname" jdbcType="VARCHAR"/>
+        <result column="petGender" property="petgender" jdbcType="BIT"/>
+        <result column="perBirthday" property="perbirthday" jdbcType="DATE"/>
+        <result column="petAllergicMaterial" property="petallergicmaterial" jdbcType="VARCHAR"/>
+        <result column="petCharacteristic" property="petcharacteristic" jdbcType="VARCHAR"/>
+        <result column="petColor" property="petcolor" jdbcType="VARCHAR"/>
+        <result column="petLineageRegisterNumber" property="petlineageregisternumber" jdbcType="VARCHAR"/>
+        <result column="petPicture" property="petpicture" jdbcType="VARCHAR"/>
+        <result column="petLineageRegistry" property="petlineageregistry" jdbcType="VARCHAR"/>
+        <result column="petStatus" property="petstatus" jdbcType="VARCHAR"/>
+        <association property="member" javaType="com._520it.crm.domain.Member" column="member_id"
+                     select="com._520it.crm.mapper.MemberMapper.selectByPrimaryKey">
+            <id column="id" property="id" jdbcType="BIGINT"/>
+            <result column="memberNumber" property="membernumber"/>
+            <result column="memberName" property="membername" jdbcType="BIGINT"/>
+        </association>
+        <association property="category" javaType="com._520it.crm.domain.Category" column="category_id"
+                     select="com._520it.crm.mapper.CategoryMapper.selectByPrimaryKey"></association>
+        <association property="breed" javaType="com._520it.crm.domain.Breed" column="breed_id"
+                     select="com._520it.crm.mapper.BreedMapper.selectByPrimaryKey"></association>
+        <association property="serviceitem" javaType="com._520it.crm.domain.Serviceitem" column="serviceitem_id"
+                     select="com._520it.crm.mapper.ServiceitemMapper.selectByItemId">
+            <id column="id" property="id" jdbcType="BIGINT"/>
+            <result column="text" property="text" jdbcType="VARCHAR"/>
+            <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
+            <result column="costPrice" property="costprice" jdbcType="DECIMAL"/>
+            <result column="units" property="units" jdbcType="INTEGER"/>
+            <result column="remark" property="remark" jdbcType="VARCHAR"/>
+            <result column="serviceStatus" property="servicestatus" jdbcType="VARCHAR"/>
+            <result column="pay" property="pay" jdbcType="BIT"/>
+            <result column="beginTime" property="begintime" jdbcType="DATE"/>
+            <result column="endTime" property="endtime" jdbcType="DATE"/>
+            <result column="fosterTime" property="fostertime" jdbcType="DATE"/>
+            <result column="discount" property="discount" />
+            <result column="specifieddiscount" property="specifieddiscount" />
+            <result column="advancepayment" property="advancepayment" />
+            <result column="retainage" property="retainage" />
+        </association>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from pet
+        where member_id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com._520it.crm.domain.Pet" useGeneratedKeys="true" keyProperty="id">
+        insert into pet (petName, petGender, perBirthday,
+        petAllergicMaterial, petCharacteristic,
+        petColor, petLineageRegisterNumber, petPicture,
+        petStatus, member_id, petLineageRegistry,category_id,breed_id,serviceitem_id
+        )
+        values (#{petname,jdbcType=VARCHAR}, #{petgender,jdbcType=BIT}, #{perbirthday,jdbcType=DATE},
+        #{petallergicmaterial,jdbcType=VARCHAR}, #{petcharacteristic,jdbcType=VARCHAR},
+        #{petcolor,jdbcType=VARCHAR}, #{petlineageregisternumber,jdbcType=VARCHAR}, #{petpicture,jdbcType=VARCHAR},
+        #{petstatus,jdbcType=VARCHAR}, #{member.id,jdbcType=BIGINT}, #{petlineageregistry,jdbcType=VARCHAR}
+        , #{category.id}, #{breed.id}, #{serviceitem.id}
+        )
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com._520it.crm.domain.Pet">
+        update pet
+        set petName = #{petname,jdbcType=VARCHAR},
+        petGender = #{petgender,jdbcType=BIT},
+        perBirthday = #{perbirthday,jdbcType=DATE},
+        petAllergicMaterial = #{petallergicmaterial,jdbcType=VARCHAR},
+        petCharacteristic = #{petcharacteristic,jdbcType=VARCHAR},
+        petColor = #{petcolor,jdbcType=VARCHAR},
+        petLineageRegisterNumber = #{petlineageregisternumber,jdbcType=VARCHAR},
+        petPicture = #{petpicture,jdbcType=VARCHAR},
+        petStatus = #{petstatus,jdbcType=VARCHAR},
+        member_id = #{memberId,jdbcType=BIGINT},
+        petLineageRegistry = #{petlineageregistry,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select id, petName, petGender, perBirthday, petAllergicMaterial, petCharacteristic,
+        petColor, petLineageRegisterNumber, petPicture, petStatus, member_id, petLineageRegistry,
+        category_id,breed_id,serviceitem_id
+        from pet
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id, petName, petGender, perBirthday, petAllergicMaterial, petCharacteristic,
+        petColor, petLineageRegisterNumber, petPicture, petStatus, member_id, petLineageRegistry
+        from pet
+    </select>
+    <select id="selectOneConectionData" resultMap="BaseResultMap">
+        select *
+        from pet p left join member m on p.member_id = m.id left join serviceitem s on s.id = p.serviceitem_id
+        where m.memberNumber = #{memberNumber}
+    </select>
+
+    <sql id="where_sql">
+    <where>
+        <if test="petNameQuery!=null and petNameQuery!=''">
+            and p.petName like concat('%',#{petNameQuery},'%')
+        </if>
+        <if test="telQuery!=null and telQuery!=''">
+            and m.memberNumber like concat('%',#{telQuery},'%')
+        </if>
+        <if test="statusQuery!=null and statusQuery!=''">
+            and s.serviceStatus = #{statusQuery}
+        </if>
+        <if test="menuIdQuery!=null and menuIdQuery!='' ">
+            and s.text = #{menuIdQuery}
+        </if>
+    </where>
+    </sql>
+
+    <!-- 查询总结果数 -->
+    <select id="queryPageCount" resultType="long">
+        select count(*) from pet p left join member m on p.member_id = m.id left join serviceitem s on s.id = p.serviceitem_id
+        <include refid="where_sql"/>
+    </select>
+
+  <!-- 查询结果集 -->
+  <select id="queryPageResult" resultMap="BaseResultMap">
+    select * from pet p left join member m on p.member_id = m.id left join serviceitem s on s.id = p.serviceitem_id
+    <include refid="where_sql"/>
+    limit #{start},#{rows}
+  </select>
+<!--保存宠物-->
+  <insert id="savePet">
+     insert into pet (petName, petGender, perBirthday,
+      petAllergicMaterial, petCharacteristic,
+      petColor, petLineageRegisterNumber, petPicture,
+      petStatus, member_id, petLineageRegistry,category_id,breed_id
+      )
+    values (#{petname,jdbcType=VARCHAR}, #{petgender,jdbcType=BIT}, #{perbirthday,jdbcType=DATE},
+      #{petallergicmaterial,jdbcType=VARCHAR}, #{petcharacteristic,jdbcType=VARCHAR},
+      #{petcolor,jdbcType=VARCHAR}, #{petlineageregisternumber,jdbcType=VARCHAR}, #{petpicture,jdbcType=VARCHAR},
+      #{petstatus,jdbcType=VARCHAR}, #{member.id,jdbcType=BIGINT}, #{petlineageregistry,jdbcType=VARCHAR},
+      #{category.id}, #{breed.id}
+      )
+  </insert>
+  <update id="updatPhotoUpload">
+  UPDATE pet SET petPicture=#{path} where id=#{petId}
+  </update>
+
+</mapper>

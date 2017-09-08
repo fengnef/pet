@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com._520it.crm.mapper.ProductCategoryMapper">
+    <resultMap id="BaseResultMap" type="com._520it.crm.domain.ProductCategory">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="category" property="category" jdbcType="VARCHAR"/>
+        <result column="kind" property="kind" jdbcType="VARCHAR"/>
+        <result column="start" property="start" jdbcType="BIT"/>
+    </resultMap>
+    <resultMap id="BaseMap" type="com._520it.crm.domain.ProductCategory">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="kind" property="kind" jdbcType="VARCHAR"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        DELETE FROM productcategory
+        WHERE id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com._520it.crm.domain.ProductCategory" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO productcategory (category, kind, start
+        )
+        VALUES (#{category,jdbcType=VARCHAR}, #{kind,jdbcType=VARCHAR}, #{start,jdbcType=BIT}
+        )
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com._520it.crm.domain.ProductCategory">
+        UPDATE productcategory
+        SET category = #{category,jdbcType=VARCHAR},
+            kind     = #{kind,jdbcType=VARCHAR},
+            start    = #{start,jdbcType=BIT}
+        WHERE id = #{id,jdbcType=BIGINT}
+    </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+            id,
+            category,
+            kind,
+            start
+        FROM productcategory
+        WHERE id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT
+            id,
+            category,
+            kind,
+            start
+        FROM productcategory
+    </select>
+
+    <sql id="base_where">
+        <where>
+            <if test="keyword!=null and keyword!=''">
+                (category like concat('%',#{keyword},'%') or
+                kind like concat('%',#{keyword},'%'))
+            </if>
+        </where>
+    </sql>
+
+    <select id="queryPageCount" resultType="Long">
+        SELECT count(*) FROM productcategory
+        <include refid="base_where"/>
+    </select>
+
+    <select id="queryPageResult" resultMap="BaseResultMap">
+        SELECT * FROM productcategory
+        <include refid="base_where"/>
+    </select>
+</mapper>

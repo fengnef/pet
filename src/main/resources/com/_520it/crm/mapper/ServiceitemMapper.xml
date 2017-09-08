@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com._520it.crm.mapper.ServiceitemMapper">
+    <resultMap id="BaseResultMap" type="com._520it.crm.domain.Serviceitem">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="text" property="text" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
+        <result column="costPrice" property="costprice" jdbcType="DECIMAL"/>
+        <result column="units" property="units" jdbcType="INTEGER"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="serviceStatus" property="servicestatus" jdbcType="VARCHAR"/>
+        <result column="pay" property="pay" jdbcType="BIT"/>
+        <result column="beginTime" property="begintime" jdbcType="DATE"/>
+        <result column="endTime" property="endtime" jdbcType="DATE"/>
+        <result column="fosterTime" property="fostertime" jdbcType="DATE"/>
+        <result column="discount" property="discount" />
+        <result column="specifieddiscount" property="specifieddiscount" />
+        <result column="advancepayment" property="advancepayment" />
+        <result column="retainage" property="retainage" />
+        <collection property="children" column="id" ofType="com._520it.crm.domain.Serviceitem" select="getChildrenMenu">
+        </collection>
+    </resultMap>
+    <resultMap id="serviceResultMap" type="com._520it.crm.domain.Serviceitem">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="text" property="text" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
+        <result column="costPrice" property="costprice" jdbcType="DECIMAL"/>
+        <result column="units" property="units" jdbcType="INTEGER"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="serviceStatus" property="servicestatus" jdbcType="VARCHAR"/>
+        <result column="pay" property="pay" jdbcType="BIT"/>
+        <result column="beginTime" property="begintime" jdbcType="DATE"/>
+        <result column="endTime" property="endtime" jdbcType="DATE"/>
+        <result column="fosterTime" property="fostertime" jdbcType="DATE"/>
+        <result column="discount" property="discount" />
+        <result column="specifieddiscount" property="specifieddiscount" />
+        <result column="advancepayment" property="advancepayment" />
+        <result column="retainage" property="retainage" />
+    </resultMap>
+    <!--根菜单结果集-->
+    <resultMap id="parentResultMap" type="com._520it.crm.domain.Serviceitem">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="text" property="text" jdbcType="VARCHAR"/>
+        <collection property="children" column="id" ofType="com._520it.crm.domain.Serviceitem" select="getChildrenMenu">
+            <id column="id" property="id" jdbcType="BIGINT"/>
+            <result column="text" property="text" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+    <!--子菜单结果集-->
+    <resultMap id="childrenResultMap" type="com._520it.crm.domain.Serviceitem">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="text" property="text" jdbcType="VARCHAR"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from serviceitem
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com._520it.crm.domain.Serviceitem" useGeneratedKeys="true" keyProperty="id">
+        insert into serviceitem (text, parent_id, costPrice,
+        units, remark, serviceStatus,
+        pay, beginTime, endTime, fosterTime,discount,specifieddiscount
+        )
+        values (#{text,jdbcType=VARCHAR}, #{parentId,jdbcType=BIGINT}, #{costprice,jdbcType=DECIMAL},
+        #{units,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{servicestatus,jdbcType=VARCHAR},
+        #{pay,jdbcType=BIT}, #{begintime,jdbcType=DATE}, #{endtime,jdbcType=DATE}, #{fostertime,jdbcType=DATE},
+        #{discount,jdbcType=BIT},#{specifieddiscount}
+        )
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com._520it.crm.domain.Serviceitem">
+        update serviceitem
+        set text = #{text,jdbcType=VARCHAR},
+        parent_id = #{parentId,jdbcType=BIGINT},
+        costPrice = #{costprice,jdbcType=DECIMAL},
+        units = #{units,jdbcType=INTEGER},
+        remark = #{remark,jdbcType=VARCHAR},
+        serviceStatus = #{servicestatus,jdbcType=VARCHAR},
+        pay = #{pay,jdbcType=BIT},
+        beginTime = #{begintime,jdbcType=DATE},
+        endTime = #{endtime,jdbcType=DATE},
+        fosterTime = #{fostertime,jdbcType=DATE}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select id, text, parent_id, costPrice, units, remark, serviceStatus, pay,
+        beginTime, endTime, fosterTime, discount, specifieddiscount, advancepayment, retainage
+        from serviceitem
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="selectByItemId" resultMap="serviceResultMap" parameterType="java.lang.Long">
+        select id, text, parent_id, costPrice, units, remark, serviceStatus, pay,
+        beginTime, endTime, fosterTime, discount, specifieddiscount, advancepayment, retainage
+        from serviceitem
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id, text, parent_id, costPrice, units, remark, serviceStatus, pay,
+        beginTime, endTime, fosterTime
+        from serviceitem
+    </select>
+    <!--查询所有根菜单-->
+    <select id="getServiceitemRoot" resultMap="parentResultMap">
+        SELECT * from serviceitem WHERE parent_id is NULL
+    </select>
+    <!--查询所有根菜单id-->
+    <select id="getServiceitemRootId" resultType="long">
+        SELECT id from serviceitem WHERE parent_id is NULL
+    </select>
+    <!-- 查询子菜单 -->
+    <select id="getChildrenMenu" resultMap="childrenResultMap">
+        select * from serviceitem where parent_id = #{pid}
+    </select>
+</mapper>

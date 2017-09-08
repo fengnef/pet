@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com._520it.crm.mapper.SufficienttakeMapper">
+    <resultMap id="BaseResultMap" type="com._520it.crm.domain.Sufficienttake">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="totalamount" property="totalamount" jdbcType="DECIMAL"/>
+        <result column="maxRechargePrice" property="maxrechargeprice" jdbcType="BIGINT"/>
+        <result column="AmountSpent" property="amountspent" jdbcType="DECIMAL"/>
+        <result column="takeRemarks" property="takeremarks" jdbcType="VARCHAR"/>
+        <!-- <result column="memberName_id" property="membername" jdbcType="BIGINT" />
+         <result column="VIPMember_id" property="vipmember" jdbcType="BIGINT" />
+         <result column="employee_id" property="employee" jdbcType="BIGINT" />-->
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from sufficienttake
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com._520it.crm.domain.Sufficienttake" useGeneratedKeys="true" keyProperty="id">
+    insert into sufficienttake (totalamount, maxRechargePrice, AmountSpent, 
+      takeRemarks, memberName_id, VIPMember_id, 
+      employee_id)
+    values (#{totalamount,jdbcType=DECIMAL}, #{maxrechargeprice,jdbcType=BIGINT}, #{amountspent,jdbcType=DECIMAL}, 
+      #{takeremarks,jdbcType=VARCHAR}, #{membername.id,jdbcType=BIGINT}, #{vipmember.id,jdbcType=BIGINT}, 
+      #{employee.id,jdbcType=BIGINT})
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com._520it.crm.domain.Sufficienttake">
+    update sufficienttake
+    set totalamount = #{totalamount,jdbcType=DECIMAL},
+      maxRechargePrice = #{maxrechargeprice,jdbcType=BIGINT},
+      AmountSpent = #{amountspent,jdbcType=DECIMAL},
+      takeRemarks = #{takeremarks,jdbcType=VARCHAR},
+      memberName_id = #{membername.id,jdbcType=BIGINT},
+      VIPMember_id = #{vipmember.id,jdbcType=BIGINT},
+      employee_id = #{employee.id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+    <update id="updeteTalamount">
+    update sufficienttake
+    set totalamount = #{totalamount,jdbcType=DECIMAL},
+    <if test="maxrechargeprice!=null">
+      maxRechargePrice = #{maxrechargeprice,jdbcType=BIGINT}
+    </if>
+        where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select id, totalamount, maxRechargePrice, AmountSpent, takeRemarks, memberName_id, 
+    VIPMember_id, employee_id
+    from sufficienttake
+    where memberName_id = #{id,jdbcType=BIGINT}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+    select id, totalamount, maxRechargePrice, AmountSpent, takeRemarks, memberName_id, 
+    VIPMember_id, employee_id
+    from sufficienttake
+  </select>
+    <!--保存会员首冲金额-->
+    <insert id="saveMeeberFirstPunch">
+        INSERT INTO  sufficienttake  (totalamount,memberName_id,VIPMember_id)
+        VALUES (#{totalamount},#{membername.id},#{vipmember.id})
+    </insert>
+</mapper>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com._520it.crm.mapper.ProductStockMapper">
+    <resultMap id="BaseResultMap" type="com._520it.crm.domain.ProductStock">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="sn" property="sn" jdbcType="VARCHAR"/>
+        <result column="bulkStock" property="bulkstock"/>
+        <result column="readyStock" property="readyStock"/>
+        <result column="balanceStock" property="balancestock"/>
+        <result column="warnningNum" property="warnningnum"/>
+        <result column="productCategory" property="productCategory"/>
+        <result column="productBrand" property="productBrand"/>
+        <result column="productSpecification" property="productSpecification"/>
+        <result column="warrantyDate" property="warrantyDate"/>
+        <result column="productDate" property="productDate"/>
+        <association property="product" javaType="com._520it.crm.domain.Product" columnPrefix="p_">
+            <result column="id" property="id"/>
+            <result column="sn" property="sn"/>
+            <result column="name" property="name"/>
+        </association>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from productstock
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com._520it.crm.domain.ProductStock" useGeneratedKeys="true" keyProperty="id">
+    insert into productstock (sn,bulkStock,
+      balanceStock, warnningNum,readyStock,product_sn,productCategory,productBrand,productSpecification,warrantyDate,productDate)
+    values (#{sn,jdbcType=VARCHAR}, #{bulkstock,jdbcType=DOUBLE},
+      #{balancestock,jdbcType=DOUBLE}, #{warnningnum,jdbcType=DOUBLE},#{readyStock},#{product.sn},#{productCategory},#{productBrand},#{productSpecification},#{warrantyDate},#{productDate})
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com._520it.crm.domain.ProductStock">
+    update productstock
+    set sn = #{sn,jdbcType=VARCHAR},
+      product_id = #{product.id,jdbcType=BIGINT},
+      product_sn = #{product.sn,jdbcType=BIGINT},
+      bulkStock = #{bulkstock,jdbcType=DOUBLE},
+      balanceStock = #{balancestock,jdbcType=DOUBLE},
+      warnningNum = #{warnningnum,jdbcType=DOUBLE}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select *
+    from productstock
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+    select *
+    from productstock
+  </select>
+
+    <!-- 查询总结果数 -->
+    <select id="queryPageCount" resultType="long">
+        select count(*)
+        from productStock ps
+        LEFT join product p
+        on ps.product_sn = p.sn
+        <include refid="where_sql"/>
+    </select>
+    <!-- 查询结果集 -->
+    <select id="queryPageResult" resultMap="BaseResultMap">
+        select ps.*,p.name p_name, p.sn p_sn,p.id p_id
+        from productStock ps
+        LEFT join product p
+        on ps.product_sn = p.sn
+        <include refid="where_sql"/>
+        limit #{start},#{rows}
+    </select>
+    <sql id="where_sql">
+        <where>
+            <if test="keyword!=null and keyword!=''">
+                and ( ps.sn LIKE concat('%',#{keyword},'%') or p.sn LIKE concat('%',#{keyword},'%'))
+            </if>
+            <if test="productName!=null and productName!=''">
+                and p.name LIKE concat('%',#{productName},'%')
+            </if>
+            <if test="category!=null and category!=''">
+                and ps.productCategory LIKE concat('%',#{category},'%')
+            </if>
+        </where>
+    </sql>
+
+    <!--根据商品编码查库存-->
+    <select id="getStockByProductSn" resultMap="BaseResultMap">
+        select ps.*,p.name p_name, p.sn p_sn,p.id p_id
+        from productStock ps
+        LEFT join product p
+        on ps.product_sn = p.sn
+        WHERE ps.product_sn =#{productSn}
+    </select>
+    <!--更新库存结余-->
+    <update id="updateBalanceStore">
+      update productstock
+      set  balanceStock = #{balanceStock}
+      where sn= #{sn}
+    </update>
+
+    <!--根据库存编码查库存-->
+    <select id="getStockByStockSn" resultMap="BaseResultMap">
+        select *  from productStock ps
+        WHERE ps.sn =#{stockSn}
+    </select>
+</mapper>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com._520it.crm.mapper.StockOutcomeBillMapper">
+    <resultMap id="BaseResultMap" type="com._520it.crm.domain.StockOutcomeBill">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="sn" property="sn" jdbcType="VARCHAR"/>
+        <result column="inputTime" property="inputtime" jdbcType="DATE"/>
+        <result column="minUnit" property="minunit" jdbcType="VARCHAR"/>
+        <result column="maxUnit" property="maxunit" jdbcType="VARCHAR"/>
+        <result column="count" property="count"/>
+        <result column="totalAmount" property="totalamount" jdbcType="DECIMAL"/>
+        <result column="salePrice" property="saleprice" jdbcType="DECIMAL"/>
+        <result column="discount" property="discount"/>
+        <result column="costPrice" property="costPrice" jdbcType="DECIMAL"/>
+        <result column="productName" property="productName"/>
+        <result column="productCategory" property="productCategory"/>
+        <result column="productSpecification" property="productSpecification"/>
+        <result column="warrantyDate" property="warrantyDate"/>
+        <result column="productDate" property="productDate"/>
+        <result column="subStore" property="subStore"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from StockOutcomeBill
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com._520it.crm.domain.StockOutcomeBill" useGeneratedKeys="true" keyProperty="id">
+        insert into StockOutcomeBill (sn, inputTime,
+        minUnit, maxUnit, count,
+        totalAmount, salePrice, discount,costPrice,productSn,productName,productCategory,productSpecification,warrantyDate,productDate,subStore
+        )
+        values (#{sn,jdbcType=VARCHAR}, #{inputtime,jdbcType=DATE},
+        #{minunit,jdbcType=VARCHAR}, #{maxunit,jdbcType=VARCHAR}, #{count,jdbcType=INTEGER},
+        #{totalamount,jdbcType=DECIMAL}, #{saleprice,jdbcType=DECIMAL}, #{discount,jdbcType=DECIMAL},#{costPrice},
+        #{productSn},#{productName},
+        #{productCategory},#{productSpecification},#{warrantyDate},#{productDate},#{subStore}
+        )
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com._520it.crm.domain.StockOutcomeBill">
+        update StockOutcomeBill
+        set sn = #{sn,jdbcType=VARCHAR},
+        inputTime = #{inputtime,jdbcType=DATE},
+        minUnit = #{minunit,jdbcType=VARCHAR},
+        maxUnit = #{maxunit,jdbcType=VARCHAR},
+        count = #{count,jdbcType=INTEGER},
+        totalAmount = #{totalamount,jdbcType=DECIMAL},
+        salePrice = #{saleprice,jdbcType=DECIMAL},
+        discount = #{discount,jdbcType=DECIMAL},
+       productCategory= #{productCategory},
+      productDate= #{productDate},
+      productSpecification= #{productSpecification},
+      warrantyDate= #{warrantyDate},
+      subStore= #{subStore},
+        costPrice=#{costPrice}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select *
+        from StockOutcomeBill
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select *
+        from StockOutcomeBill
+    </select>
+
+    <!-- 查询总结果数 -->
+    <select id="queryPageCount" resultType="long">
+        select count(*) from StockOutcomeBill
+        <include refid="where_sql"/>
+    </select>
+    <!-- 查询结果集 -->
+    <select id="queryPageResult" resultMap="BaseResultMap">
+        select *
+        from StockOutcomeBill
+        <include refid="where_sql"/>
+        limit #{start},#{rows}
+    </select>
+    <sql id="where_sql">
+        <where></where>
+    </sql>
+    <delete id="deleteAllOutcomeBill">
+        DELETE FROM StockOutcomeBill
+    </delete>
+</mapper>

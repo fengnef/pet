@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com._520it.crm.mapper.SupplierMapper" >
+  <resultMap id="BaseResultMap" type="com._520it.crm.domain.Supplier" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="linkman" property="linkman" jdbcType="VARCHAR" />
+    <result column="tel" property="tel" jdbcType="VARCHAR" />
+    <result column="good" property="good" jdbcType="VARCHAR" />
+    <result column="cooperationtime" property="cooperationtime" jdbcType="INTEGER" />
+    <result column="advantage" property="advantage" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from supplier
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com._520it.crm.domain.Supplier" useGeneratedKeys="true" keyProperty="id" >
+    insert into supplier (name, linkman, tel, 
+      good, cooperationtime, advantage
+      )
+    values (#{name,jdbcType=VARCHAR}, #{linkman,jdbcType=VARCHAR}, #{tel,jdbcType=VARCHAR}, 
+      #{good,jdbcType=VARCHAR}, #{cooperationtime,jdbcType=INTEGER}, #{advantage,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com._520it.crm.domain.Supplier" >
+    update supplier
+    set name = #{name,jdbcType=VARCHAR},
+      linkman = #{linkman,jdbcType=VARCHAR},
+      tel = #{tel,jdbcType=VARCHAR},
+      good = #{good,jdbcType=VARCHAR},
+      cooperationtime = #{cooperationtime,jdbcType=INTEGER},
+      advantage = #{advantage,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, name, linkman, tel, good, cooperationtime, advantage
+    from supplier
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, name, linkman, tel, good, cooperationtime, advantage
+    from supplier
+  </select>
+
+  <sql id="base_where">
+    <where>
+      <if test="keyword!=null and keyword!=''">
+        name like concat('%',#{keyword},'%')
+      </if>
+    </where>
+  </sql>
+
+  <select id="queryPageCount" resultType="Long">
+    SELECT count(*) FROM supplier
+    <include refid="base_where"/>
+  </select>
+
+  <select id="queryPageResult" resultMap="BaseResultMap">
+    SELECT * FROM supplier
+    <include refid="base_where"/>
+    LIMIT #{start},#{rows}
+  </select>
+</mapper>
